@@ -1,0 +1,18 @@
+# Bilibili Cookie
+# Replace this text with your Bilibili cookie string
+# 
+# How to get your cookie:
+# 1. Log in to Bilibili (https://www.bilibili.com/) in your browser
+# 2. Open Developer Tools (F12 or right-click > Inspect)
+# 3. Go to the "Network" tab
+# 4. Refresh the page
+# 5. Click on any request to bilibili.com
+# 6. Look for "Cookie" in the request headers
+# 7. Copy the entire cookie string (starts with something like "buvid3=...")
+# 8. Paste the cookie string here, replacing this text
+# 9. Save this file as "cookie.txt" in the same directory as the script
+#
+# IMPORTANT: 
+# - Keep your cookie private! Don't share it with others.
+# - Add cookie.txt to your .gitignore file to avoid committing it to version control.
+# - The cookie is used to access restricted content and improve API rate limits.

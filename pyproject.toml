@@ -1,0 +1,13 @@
+[project]
+name = "bilidanmakudownload"
+version = "1.0.0"
+description = "Bilibili Danmaku Downloader"
+requires-python = ">=3.13"
+dependencies = [
+    "aiofiles>=24.1.0",
+    "aiohttp>=3.11.18",
+    "grpcio-tools>=1.71.0",
+    "protobuf>=5.29.4",
+    "rich>=14.0.0",
+    "typer>=0.15.4",
+]
