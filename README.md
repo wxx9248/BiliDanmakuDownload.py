@@ -1,15 +1,15 @@
 # Bilibili Danmaku Downloader
 
-A Python program to download danmaku (comments) from Bilibili videos.
+A Python program to download danmaku (realtime comments) from Bilibili videos.
 
 ## Features
 
-- Supports various resource types: 
-  - AV ID (single video, starts with "av")
-  - BV ID (single video, starts with "bv")
-  - EP ID (episode)
-  - SS ID (season)
-  - MD ID (media)
+- Supports various resource types:
+    - avid (single video, starts with "av")
+    - bvid (single video, starts with "bv")
+    - epid (episode)
+    - ssid (season)
+    - mdid (media)
 - Exports danmaku in multiple formats: XML, JSON, CSV, plain text
 - Interactive CLI mode for easy use
 - Command-line mode for scripting/automation
@@ -47,12 +47,12 @@ For accessing restricted content or improving API limits, you can provide your B
    ```
 
 2. Login to Bilibili in your browser, then get your cookie:
-   - Open Developer Tools (F12)
-   - Go to Network tab
-   - Refresh the page
-   - Click on any request to bilibili.com
-   - Find the "Cookie" header in the request
-   - Copy the entire cookie string
+    - Open Developer Tools (F12)
+    - Go to Network tab
+    - Refresh the page
+    - Click on any request to bilibili.com
+    - Find the "Cookie" header in the request
+    - Copy the entire cookie string
 
 3. Paste your cookie into the `cookie.txt` file, replacing all the template text
 
@@ -69,7 +69,8 @@ python main.py
 ```
 
 The program will prompt you for:
-- Resource ID (avid, BVid, epid, ssid, mdid) 
+
+- Resource ID (avid, bvid, epid, ssid, mdid)
 - Output format (XML, JSON, CSV, plain text)
 - Output directory
 - Maximum number of segments to download
@@ -89,7 +90,7 @@ python main.py download av12345 --cookie my_cookie.txt
 
 #### Options:
 
-- `resource_id`: Resource ID (avid, BVid, epid, ssid, mdid)
+- `resource_id`: Resource ID (avid, bvid, epid, ssid, mdid)
 - `--output`, `-o`: Output directory (default: "output")
 - `--format`, `-f`: Output format (xml, json, csv, txt) (default: "xml")
 - `--segments`, `-s`: Maximum number of segments to download per content (default: 10)
@@ -105,11 +106,13 @@ python main.py download av12345 --cookie my_cookie.txt
 ## Notes
 
 - Each segment is 6 minutes of content
-- The default maximum of 10 segments covers approximately 60 minutes of content
 - Resource IDs must include their prefix (av, bv, ep, ss, md)
-- The "cid" parameter in the API refers to "Chat ID" which is used to retrieve danmaku for a specific video/episode
 - Using a cookie file allows you to access content that requires login
 
 ## License
 
 MIT License
+
+## Accreditation
+
+* [bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect/)

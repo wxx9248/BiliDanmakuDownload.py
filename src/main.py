@@ -46,7 +46,7 @@ async def download_all_danmaku(
     Download danmaku for all content associated with a resource ID.
     
     Args:
-        resource_id_input: ResourceID object or resource ID string (avid, BVid, epid, ssid, mdid)
+        resource_id_input: ResourceID object or resource ID string (avid, bvid, epid, ssid, mdid)
         output_dir: Output directory
         output_format: Output format
         cookie_file: Path to the cookie file
@@ -133,7 +133,7 @@ async def download_all_danmaku(
 
 @app.command()
 def download(
-        resource_id: str = typer.Argument(..., help="Resource ID (avid, BVid, epid, ssid, mdid) "),
+        resource_id: str = typer.Argument(..., help="Resource ID (avid, bvid, epid, ssid, mdid) "),
         output_dir: str = typer.Option(DEFAULT_OUTPUT_DIR, "--output", "-o", help="Output directory"),
         format: str = typer.Option(
             DanmakuExportFormat.XML,
@@ -173,7 +173,7 @@ def interactive() -> None:
     Run the program in interactive mode.
     """
     console.print("[bold blue]Bilibili Danmaku Downloader - Interactive Mode[/bold blue]")
-    console.print("Enter resource ID (avid, BVid, epid, ssid, mdid) or 'q' to quit:")
+    console.print("Enter resource ID (avid, bvid, epid, ssid, mdid) or 'q' to quit:")
 
     while True:
         resource_id_str = console.input("[bold cyan]> [/bold cyan]")
