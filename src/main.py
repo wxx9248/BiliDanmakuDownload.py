@@ -38,7 +38,7 @@ DEFAULT_COOKIE_FILE = "cookie.txt"
 
 
 async def download_all_danmaku(
-        resource_id_str: str,
+        resource_id_input,
         output_dir: str = DEFAULT_OUTPUT_DIR,
         output_format: str = DanmakuExportFormat.XML,
         max_segments: int = DEFAULT_MAX_SEGMENTS,
@@ -48,18 +48,23 @@ async def download_all_danmaku(
     Download danmaku for all content associated with a resource ID.
     
     Args:
-        resource_id_str: Resource ID (avid, BVid, epid, ssid, mdid) 
+        resource_id_input: ResourceID object or resource ID string (avid, BVid, epid, ssid, mdid)
         output_dir: Output directory
         output_format: Output format
         max_segments: Maximum number of segments to download per content
         cookie_file: Path to the cookie file
     """
-    # Parse resource ID
-    try:
-        resource_id = ResourceID(resource_id_str)
-    except ValueError as e:
-        console.print(f"[bold red]Error:[/bold red] {e}")
-        return
+    # Parse resource ID if it's a string
+    if isinstance(resource_id_input, ResourceID):
+        resource_id = resource_id_input
+        resource_id_str = str(resource_id)
+    else:
+        resource_id_str = resource_id_input
+        try:
+            resource_id = ResourceID(resource_id_str)
+        except ValueError as e:
+            console.print(f"[bold red]Error:[/bold red] {e}")
+            return
 
     console.print(f"[bold green]Processing resource:[/bold green] {resource_id_str}")
 
@@ -175,13 +180,22 @@ def interactive() -> None:
     console.print("Enter resource ID (avid, BVid, epid, ssid, mdid) or 'q' to quit:")
 
     while True:
-        resource_id = console.input("[bold cyan]> [/bold cyan]")
+        resource_id_str = console.input("[bold cyan]> [/bold cyan]")
 
-        if resource_id.lower() in ["q", "quit", "exit"]:
+        if resource_id_str.lower() in ["q", "quit", "exit"]:
             console.print("[bold]Goodbye![/bold]")
             break
 
-        if not resource_id:
+        if not resource_id_str:
+            continue
+
+        # Verify resource ID immediately
+        try:
+            resource_id = ResourceID(resource_id_str)
+            console.print(f"[bold green]Valid resource ID:[/bold green] {resource_id_str} (Type: {resource_id.resource_type})")
+        except ValueError as e:
+            console.print(f"[bold red]Error:[/bold red] {e}")
+            console.print("Please enter a valid resource ID or 'q' to quit:")
             continue
 
         # Ask for format
