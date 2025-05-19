@@ -6,7 +6,7 @@ A Python program to download danmaku (realtime comments) from Bilibili videos.
 
 - Supports various resource types:
     - avid (single video, starts with "av")
-    - bvid (single video, starts with "bv")
+    - bvid (single video, starts with "BV")
     - epid (episode)
     - ssid (season)
     - mdid (media)
@@ -65,7 +65,7 @@ Note: The `cookie.txt` file is included in `.gitignore` to prevent accidentally 
 To use the interactive mode, simply run:
 
 ```bash
-python main.py
+python src/main.py
 ```
 
 The program will prompt you for:
@@ -73,7 +73,6 @@ The program will prompt you for:
 - Resource ID (avid, bvid, epid, ssid, mdid)
 - Output format (XML, JSON, CSV, plain text)
 - Output directory
-- Maximum number of segments to download
 - Cookie file path (optional)
 
 ### Command Line Mode
@@ -81,11 +80,11 @@ The program will prompt you for:
 You can also use the command line interface:
 
 ```bash
-python main.py download av12345
-python main.py download BV1xx411c7mD
-python main.py download ep67890 --format json
-python main.py download ss12345 -o my_danmaku -f csv
-python main.py download av12345 --cookie my_cookie.txt
+python src/main.py download av12345
+python src/main.py download BV1xx411c7mD
+python src/main.py download ep67890 --format json
+python src/main.py download ss12345 -o my_danmaku -f csv
+python src/main.py download av12345 --cookie my_cookie.txt
 ```
 
 #### Options:
@@ -93,7 +92,6 @@ python main.py download av12345 --cookie my_cookie.txt
 - `resource_id`: Resource ID (avid, bvid, epid, ssid, mdid)
 - `--output`, `-o`: Output directory (default: "output")
 - `--format`, `-f`: Output format (xml, json, csv, txt) (default: "xml")
-- `--segments`, `-s`: Maximum number of segments to download per content (default: 10)
 - `--cookie`, `-c`: Path to the cookie file (default: "cookie.txt")
 
 ## Formats
@@ -105,8 +103,7 @@ python main.py download av12345 --cookie my_cookie.txt
 
 ## Notes
 
-- Each segment is 6 minutes of content
-- Resource IDs must include their prefix (av, bv, ep, ss, md)
+- Resource IDs must include their prefix (av, BV, ep, ss, md)
 - Using a cookie file allows you to access content that requires login
 
 ## License
