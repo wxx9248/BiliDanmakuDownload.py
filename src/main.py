@@ -33,7 +33,6 @@ app = typer.Typer(
 console = Console()
 
 DEFAULT_OUTPUT_DIR = "output"
-DEFAULT_MAX_SEGMENTS = 10  # 10 segments = 60 minutes (6min per segment)
 DEFAULT_COOKIE_FILE = "cookie.txt"
 
 
@@ -41,7 +40,6 @@ async def download_all_danmaku(
         resource_id_input,
         output_dir: str = DEFAULT_OUTPUT_DIR,
         output_format: str = DanmakuExportFormat.XML,
-        max_segments: int = DEFAULT_MAX_SEGMENTS,
         cookie_file: str = DEFAULT_COOKIE_FILE
 ) -> None:
     """
@@ -51,7 +49,6 @@ async def download_all_danmaku(
         resource_id_input: ResourceID object or resource ID string (avid, BVid, epid, ssid, mdid)
         output_dir: Output directory
         output_format: Output format
-        max_segments: Maximum number of segments to download per content
         cookie_file: Path to the cookie file
     """
     # Parse resource ID if it's a string
@@ -86,9 +83,14 @@ async def download_all_danmaku(
             table.add_column("AVID", style="cyan")
             table.add_column("Title", style="green")
             table.add_column("CID", style="yellow")
+            table.add_column("Duration", style="magenta")
 
-            for id_key, (title, cid) in content_dict.items():
-                table.add_row(id_key, title, cid)
+            for id_key, (title, cid, duration) in content_dict.items():
+                # Format duration as MM:SS
+                minutes = duration // 60
+                seconds = duration % 60
+                duration_str = f"{minutes}:{seconds:02d}"
+                table.add_row(id_key, title, cid, duration_str)
 
             console.print(table)
 
@@ -102,7 +104,7 @@ async def download_all_danmaku(
             ) as progress:
                 total_task = progress.add_task("[cyan]Total progress", total=len(content_dict))
 
-                for id_key, (title, cid) in content_dict.items():
+                for id_key, (title, cid, duration) in content_dict.items():
                     task_desc = f"Downloading danmaku for: {title}"
                     dl_task = progress.add_task(task_desc, total=1)
 
@@ -111,9 +113,9 @@ async def download_all_danmaku(
                     output_filename = f"{resource_id_str}_{id_key}_{safe_title}.{output_format}"
                     output_path = os.path.join(output_dir, output_filename)
 
-                    # Download danmaku
+                    # Download danmaku with duration-based segment calculation
                     try:
-                        danmaku_list = await danmaku_downloader.download_danmaku(cid, max_segments)
+                        danmaku_list = await danmaku_downloader.download_danmaku(cid, duration)
                         await DanmakuExporter.export(danmaku_list, output_path, output_format)
 
                         progress.update(dl_task, completed=1, description=f"[green]✓ Downloaded: {title}")
@@ -139,12 +141,6 @@ def download(
             "-f",
             help="Output format (xml, json, csv, txt)"
         ),
-        max_segments: int = typer.Option(
-            DEFAULT_MAX_SEGMENTS,
-            "--segments",
-            "-s",
-            help="Maximum number of segments to download per content (6min per segment)"
-        ),
         cookie_file: str = typer.Option(
             DEFAULT_COOKIE_FILE,
             "--cookie",
@@ -168,7 +164,7 @@ def download(
         console.print("Supported formats: xml, json, csv, txt")
         return
 
-    asyncio.run(download_all_danmaku(resource_id, output_dir, format, max_segments, cookie_file))
+    asyncio.run(download_all_danmaku(resource_id, output_dir, format, cookie_file))
 
 
 @app.command()
@@ -224,21 +220,13 @@ def interactive() -> None:
         if not output_dir:
             output_dir = default_dir
 
-        # Ask for maximum segments
-        max_segments_str = console.input(f"[bold cyan]Max segments (6min each) [{DEFAULT_MAX_SEGMENTS}] > [/bold cyan]")
-        try:
-            max_segments = int(max_segments_str) if max_segments_str else DEFAULT_MAX_SEGMENTS
-        except ValueError:
-            console.print(f"[yellow]Invalid value, using default ({DEFAULT_MAX_SEGMENTS}).[/yellow]")
-            max_segments = DEFAULT_MAX_SEGMENTS
-
         # Ask for cookie file
         cookie_file = console.input(f"[bold cyan]Cookie file [{DEFAULT_COOKIE_FILE}] > [/bold cyan]")
         if not cookie_file:
             cookie_file = DEFAULT_COOKIE_FILE
 
         # Start download
-        asyncio.run(download_all_danmaku(resource_id, output_dir, format, max_segments, cookie_file))
+        asyncio.run(download_all_danmaku(resource_id, output_dir, format, cookie_file))
 
         # Continue prompt
         console.print("\nEnter another resource ID or 'q' to quit:")

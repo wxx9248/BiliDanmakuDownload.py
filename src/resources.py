@@ -105,7 +105,7 @@ class ResourceFetcher:
 
         return str(response["result"]["media"]["season_id"])
 
-    async def fetch_episodes_from_season_id(self, ssid: str) -> Dict[str, Tuple[str, str]]:
+    async def fetch_episodes_from_season_id(self, ssid: str) -> Dict[str, Tuple[str, str, int]]:
         """
         Get episodes from season ID.
         
@@ -113,7 +113,7 @@ class ResourceFetcher:
             ssid: Season ID
             
         Returns:
-            Dictionary mapping aid to (title, chat_id)
+            Dictionary mapping aid to (title, chat_id, duration_seconds)
         """
         url = "https://api.bilibili.com/pgc/view/web/season"
         params = {"season_id": ssid}
@@ -128,7 +128,9 @@ class ResourceFetcher:
             aid = str(episode["aid"])
             title = episode["long_title"] or episode["title"]
             cid = str(episode["cid"])
-            episodes[aid] = (title, cid)
+            # Duration in seconds
+            duration = episode.get("duration", 0) // 1000  # Convert from milliseconds to seconds if present
+            episodes[aid] = (title, cid, duration)
 
         # Extract episodes from other sections if available
         if "section" in response["result"]:
@@ -137,11 +139,13 @@ class ResourceFetcher:
                     aid = str(episode["aid"])
                     title = episode["title"]
                     cid = str(episode["cid"])
-                    episodes[aid] = (title, cid)
+                    # Duration in seconds
+                    duration = episode.get("duration", 0) // 1000  # Convert from milliseconds to seconds if present
+                    episodes[aid] = (title, cid, duration)
 
         return episodes
 
-    async def fetch_episodes_from_episode_id(self, epid: str) -> Dict[str, Tuple[str, str]]:
+    async def fetch_episodes_from_episode_id(self, epid: str) -> Dict[str, Tuple[str, str, int]]:
         """
         Get episodes from episode ID.
         
@@ -149,7 +153,7 @@ class ResourceFetcher:
             epid: Episode ID
             
         Returns:
-            Dictionary mapping aid to (title, chat_id)
+            Dictionary mapping aid to (title, chat_id, duration_seconds)
         """
         url = "https://api.bilibili.com/pgc/view/web/season"
         params = {"ep_id": epid}
@@ -162,7 +166,7 @@ class ResourceFetcher:
         ssid = str(response["result"]["season_id"])
         return await self.fetch_episodes_from_season_id(ssid)
 
-    async def fetch_pages_from_avid(self, avid: str) -> Dict[str, Tuple[str, str]]:
+    async def fetch_pages_from_avid(self, avid: str) -> Dict[str, Tuple[str, str, int]]:
         """
         Get video pages from avid.
         
@@ -170,7 +174,7 @@ class ResourceFetcher:
             avid: Video ID
             
         Returns:
-            Dictionary mapping page number to (title, chat_id)
+            Dictionary mapping page number to (title, chat_id, duration_seconds)
         """
         url = "https://api.bilibili.com/x/web-interface/view"
         params = {"aid": avid}
@@ -184,11 +188,12 @@ class ResourceFetcher:
             page_num = str(page["page"])
             title = page["part"]
             cid = str(page["cid"])
-            pages[page_num] = (title, cid)
+            duration = page.get("duration", 0)  # Duration in seconds
+            pages[page_num] = (title, cid, duration)
 
         return pages
 
-    async def fetch_pages_from_bvid(self, bvid: str) -> Dict[str, Tuple[str, str]]:
+    async def fetch_pages_from_bvid(self, bvid: str) -> Dict[str, Tuple[str, str, int]]:
         """
         Get video pages from bvid.
         
@@ -196,7 +201,7 @@ class ResourceFetcher:
             bvid: Full bvid including prefix
             
         Returns:
-            Dictionary mapping page number to (title, chat_id)
+            Dictionary mapping page number to (title, chat_id, duration_seconds)
         """
         url = "https://api.bilibili.com/x/web-interface/view"
         params = {"bvid": bvid}
@@ -210,11 +215,12 @@ class ResourceFetcher:
             page_num = str(page["page"])
             title = page["part"]
             cid = str(page["cid"])
-            pages[page_num] = (title, cid)
+            duration = page.get("duration", 0)  # Duration in seconds
+            pages[page_num] = (title, cid, duration)
 
         return pages
 
-    async def fetch_content_ids(self, resource_id: ResourceID) -> Dict[str, Tuple[str, str]]:
+    async def fetch_content_ids(self, resource_id: ResourceID) -> Dict[str, Tuple[str, str, int]]:
         """
         Get content IDs based on resource type.
         
@@ -222,7 +228,7 @@ class ResourceFetcher:
             resource_id: Parsed resource ID
             
         Returns:
-            Dictionary mapping id to (title, chat_id)
+            Dictionary mapping id to (title, chat_id, duration_seconds)
         """
         resource_type = resource_id.resource_type.lower()
 

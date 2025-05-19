@@ -36,22 +36,26 @@ class DanmakuDownloader:
         """
         self.client = client
 
-    async def download_danmaku(self, cid: str, max_segments: int = 10) -> List[dm_pb2.DanmakuElem]:
+    async def download_danmaku(self, cid: str, duration_seconds: int = 0) -> List[dm_pb2.DanmakuElem]:
         """
         Download danmaku for a specific Chat ID.
         
         Args:
             cid: Chat ID
-            max_segments: Maximum number of segments to download (6min each)
+            duration_seconds: Video duration in seconds (used to determine segment count)
             
         Returns:
             List of DanmakuElem
         """
         all_danmaku = []
 
+        # Calculate number of segments (each segment is 6 minutes = 360 seconds)
+        # Add 1 extra segment to ensure we capture all danmaku
+        segment_count = max(1, (duration_seconds // 360) + 1)
+
         # Create tasks for fetching all segments
         tasks = []
-        for segment_index in range(1, max_segments + 1):
+        for segment_index in range(1, segment_count + 1):
             tasks.append(self.client.get_danmaku(cid, segment_index))
 
         # Execute tasks concurrently
