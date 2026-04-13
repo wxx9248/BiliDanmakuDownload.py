@@ -8,6 +8,6 @@ dependencies = [
     "aiohttp>=3.11.18",
     "grpcio-tools>=1.71.0",
     "protobuf>=5.29.4",
-    "rich>=14.0.0",
+    "rich>=15.0.0",
     "typer>=0.15.4",
 ]
