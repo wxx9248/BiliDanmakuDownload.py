@@ -9,5 +9,5 @@ dependencies = [
     "grpcio-tools>=1.81.0",
     "protobuf>=5.29.4",
     "rich>=15.0.0",
-    "typer>=0.26.5",
+    "typer>=0.26.7",
 ]
